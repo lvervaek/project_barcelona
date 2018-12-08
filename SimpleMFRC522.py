@@ -14,9 +14,11 @@ class SimpleMFRC522:
     self.READER = MFRC522.MFRC522()
   
   def read(self):
+      i = 1
       id, text = self.read_no_block()        
-      while not id:
-          id, text = self.read_no_block()  
+      while not id and i>0:
+          id, text = self.read_no_block()
+          i-=1
       return id, text
 
   def read_id(self):
