@@ -7,6 +7,7 @@ import MFRC522
 import pygame
 import sys
 import time
+import pandas as pd
 pygame.init()
 
 # Define some colors
@@ -18,6 +19,15 @@ RED = ( 255, 0, 0)
 reader = SimpleMFRC522.SimpleMFRC522()
 complex_reader = MFRC522.MFRC522()
 
+try:
+    df_users = pd.read_csv("databases/users.csv")
+except IOError:
+    print("Could not read file: probably didn't exist yet.")
+    print("Creating a new one...")
+    df_users = pd.DataFrame(columns=['ID', 'FirstName', 'LastName', 'Email'])
+
+
+
 
 # Open a new window
 size = (700, 500)
@@ -28,13 +38,19 @@ font = pygame.font.SysFont("Lato-Medium",36)
 
 # The loop will carry on until the user exit the game (e.g. clicks the close button).
 carryOn = True
- 
+
 # The clock will be used to control how fast the screen updates
 clock = pygame.time.Clock()
 
 # Homescreen
 def displayHomeScreen():
     card_text = font.render("Place card to start pouring!", True, (0,0,200))
+    screen.fill(WHITE)
+    screen.blit(card_text, (50,150))
+    pygame.display.flip()
+
+def displayPouringScreen(name):
+    card_text = font.render("Hi " + str(name) + ", start pouring with P", True, (0,0,200))
     screen.fill(WHITE)
     screen.blit(card_text, (50,150))
     pygame.display.flip()
@@ -57,13 +73,9 @@ while carryOn:
         
         time.sleep(1)
         while(reader.read()[0] is not None):
-            print("HMMM")
             print(reader.read())
             id, data = reader.read()
-            card_text = font.render("Hi " + str(sys.getsizeof(data)) + ", start pouring with P", True, (0,0,200))
-            screen.fill(WHITE)
-            screen.blit(card_text, (50,150))
-            pygame.display.flip()
+            name = df_users[df_users['ID'] == id]['FirstName'].values[0]
             text = raw_input("Press P to start pouring")
             if text == 'P':
                 new_pour = int(data)+1
