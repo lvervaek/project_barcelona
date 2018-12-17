@@ -9,10 +9,18 @@ import time
 
 try:
     df = pd.read_csv("databases/users.csv")
+    df_events = pd.read_csv("databases/events.csv")
 except IOError:
     print("Could not read file: probably didn't exist yet.")
     print("Creating a new one...")
-    df = pd.DataFrame(columns=['ID', 'FirstName', 'LastName', 'Email'])
+    df = pd.DataFrame(columns=['ID', 'FirstName', 'LastName', 'Email', 'Charge'])
+    
+try:
+    df_events = pd.read_csv("databases/events.csv")
+except IOError:
+    print("Could not read file: probably didn't exist yet.")
+    print("Creating a new one...")
+    df_events = pd.DataFrame(columns=['ID', 'Time', 'Volume', 'Cost'])
  
 while(True): 
     input = raw_input("Enter 1 for new entry, 2 for exit")
@@ -54,6 +62,7 @@ while(True):
     print(df)
 
     df.to_csv("databases/users.csv")
+    df_events.to_csv("databases/events.csv")
 
 
 GPIO.cleanup()
